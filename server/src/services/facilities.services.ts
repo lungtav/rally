@@ -23,6 +23,22 @@ const createFacility = async (input: CreateFacilityInput) => {
   return { facility };
 };
 
+const deleteFacility = async (id: string) => {
+  const result = await pool.query(
+    `
+      DELETE FROM facilities
+      WHERE id = $1
+      RETURNING *
+    `,
+    [id],
+  );
+
+  if (result.rows.length === 0) {
+    throw new NotFoundError("facility doesn't exist");
+  }
+
+  return result.rows[0];
+};
 const getFacility = async (id: string) => {
   //find facility
 
@@ -75,13 +91,9 @@ const listFacilities = async (input: PaginationQuery) => {
 
   const totalFacilities = Number(totalFacilitiesResult.rows[0].count);
 
-  if (!totalFacilities) {
-    throw new NotFoundError("no facilities");
-  }
-
   const totalPages = Math.ceil(totalFacilities / limit);
 
   return { facilities, totalPages };
 };
 
-export { listFacilities, createFacility, getFacility };
+export { listFacilities, createFacility, deleteFacility, getFacility };

@@ -35,6 +35,18 @@ const createFacility = asyncHandler(
   },
 );
 
+const deleteFacility = asyncHandler(
+  async (req: Request<{ id: string }>, res: Response) => {
+    const { id } = req.params;
+
+    await facilitiesServices.deleteFacility(id);
+
+    return res.status(200).json({
+      message: "facility deleted successfully",
+    });
+  },
+);
+
 const getFacility = asyncHandler(
   async (req: Request<{ id: string }>, res: Response) => {
     const { id } = req.params;
@@ -66,4 +78,4 @@ const listFacilities = asyncHandler(
   },
 );
 
-export { listFacilities, createFacility, getFacility };
+export { listFacilities, createFacility, getFacility, deleteFacility };
