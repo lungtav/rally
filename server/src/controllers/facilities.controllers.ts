@@ -7,6 +7,7 @@ import type {
 import * as facilitiesServices from "../services/facilities.services.js";
 import { CreateFacilitySchema } from "../types/facilities.types.js";
 import { ValidationError } from "../errors/ValidationError.js";
+import { NotFoundError } from "../errors/NotFoundError.js";
 
 const createFacility = asyncHandler(
   async (req: Request<{}, {}, CreateFacilityInput>, res: Response) => {
@@ -34,6 +35,19 @@ const createFacility = asyncHandler(
   },
 );
 
+const getFacility = asyncHandler(
+  async (req: Request<{ id: string }>, res: Response) => {
+    const { id } = req.params;
+
+    const facility = await facilitiesServices.getFacility(id);
+
+    return res.status(200).json({
+      message: "facility fetched successfully",
+      facility,
+    });
+  },
+);
+
 const listFacilities = asyncHandler(
   async (req: Request<{}, {}, {}, PaginationQuery>, res: Response) => {
     const page = Number(req.query.page) || 1;
@@ -52,4 +66,4 @@ const listFacilities = asyncHandler(
   },
 );
 
-export { listFacilities, createFacility };
+export { listFacilities, createFacility, getFacility };

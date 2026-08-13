@@ -14,13 +14,31 @@ const createFacility = async (input: CreateFacilityInput) => {
     `
     INSERT INTO facilities (name, type, description, opens_at, closes_at) 
     VALUES($1, $2, $3, $4, $5)
-    RETURNING id, name, type, description, opens_at, closes_at`,
+    RETURNING *`,
     [name, type, description, opensAt, closesAt],
   );
 
   const facility = facilityRow.rows[0];
 
   return { facility };
+};
+
+const getFacility = async (id: string) => {
+  //find facility
+
+  const facilityResult = await pool.query(
+    `
+        SELECT * FROM facilities WHERE id =$1`,
+    [id],
+  );
+
+  const facility = facilityResult.rows[0];
+
+  if (!facility) {
+    throw new NotFoundError("facility not found");
+  }
+
+  return facility;
 };
 
 const listFacilities = async (input: PaginationQuery) => {
@@ -62,4 +80,4 @@ const listFacilities = async (input: PaginationQuery) => {
   return { facilities, totalPages };
 };
 
-export { listFacilities, createFacility };
+export { listFacilities, createFacility, getFacility };
