@@ -6,7 +6,6 @@ import {
   type SignUpRequestBody,
   type LoginRequestInput,
   type VerifyOtpRequestBody,
-  type RefreshInput,
 } from "../types/auth.types.js";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import { ValidationError } from "../errors/ValidationError.js";
@@ -49,7 +48,6 @@ const verifyOtp = asyncHandler(
     const { email, otp } = parsed.data;
     const sessionInformation = req.get("user-agent") ?? "unknown";
 
-    //find user
 
     const { user, accessToken, refreshTokenExpiresAt, refreshToken } =
       await authService.verifyOtp({

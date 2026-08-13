@@ -12,6 +12,7 @@ import { ValidationError } from "../errors/ValidationError.js";
 import { generateAccessToken, generateRefreshToken } from "../lib/tokens.js";
 import { ForbiddenError } from "../errors/ForbiddenError.js";
 import { UnauthorizedError } from "../errors/UnauthorizedError.js";
+import { verifyEmail } from "../services/email.services.js";
 
 const signup = async (input: SignUpInput) => {
   const { username, email, password } = input;
@@ -61,8 +62,8 @@ const signup = async (input: SignUpInput) => {
     [otpHash, expiresAt, user.id],
   );
 
-  //dummy alert user
-  console.log(otp);
+  //email user
+  await verifyEmail(email, otp);
 
   return user;
 };
@@ -81,8 +82,6 @@ const verifyOtp = async (input: VerifyOtpArgBody) => {
   );
 
   const user = result.rows[0];
-
-  console.log(user.otp_code);
 
   if (!user) {
     throw new NotFoundError("user not found");
@@ -317,6 +316,4 @@ const logout = async (refreshToken: string) => {
   );
 };
 
-
-
-export { signup, verifyOtp, login, refresh, logout};
+export { signup, verifyOtp, login, refresh, logout };

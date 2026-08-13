@@ -28,4 +28,5 @@ export const env = {
       : "debug"),
   databaseURL: validateEnv("DATABASE_URL"),
   JWT_SECRET_KEY: validateEnv("JWT_SECRET_KEY"),
+  RESEND_API_KEY: validateEnv("RESEND_API_KEY"),
 } as const;
