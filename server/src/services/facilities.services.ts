@@ -52,6 +52,10 @@ const listFacilities = async (input: PaginationQuery) => {
     throw new ValidationError("invalid page or limit");
   }
 
+  if (limit > 100) {
+    throw new ValidationError("limit cannot exceed 100");
+  }
+
   const offset: number = (page - 1) * limit;
 
   const facilitiesRow = await pool.query(
@@ -63,7 +67,7 @@ const listFacilities = async (input: PaginationQuery) => {
     [limit, offset],
   );
 
-  const facilities = facilitiesRow.rows[0];
+  const facilities = facilitiesRow.rows;
 
   const totalFacilitiesResult = await pool.query(`
     SELECT COUNT(*) FROM facilities
@@ -75,7 +79,7 @@ const listFacilities = async (input: PaginationQuery) => {
     throw new NotFoundError("no facilities");
   }
 
-  const totalPages = totalFacilities / limit;
+  const totalPages = Math.ceil(totalFacilities / limit);
 
   return { facilities, totalPages };
 };
