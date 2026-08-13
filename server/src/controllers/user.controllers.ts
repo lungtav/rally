@@ -28,7 +28,7 @@ const changePassword = asyncHandler(
     if (!req.user) {
       throw new UnauthorizedError("unauthorized");
     }
-    const userId = req.user.id;
+    const userId = req.user?.id;
     const parsed = ChangePasswordSchema.safeParse(req.body);
 
     if (!parsed.success) {
