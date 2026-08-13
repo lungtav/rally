@@ -5,7 +5,7 @@ import {
 } from "../types/user.types.js";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import { ValidationError } from "../errors/ValidationError.js";
-import * as userService from "../services/user.services.js";
+import * as userService from "../services/users.services.js";
 import { UnauthorizedError } from "../errors/UnauthorizedError.js";
 
 const getMe = asyncHandler(async (req: Request, res: Response) => {

@@ -14,7 +14,7 @@ export const createApp = function () {
   app.use(express.urlencoded());
 
   //routes
-  app.use("/api", appRouter);
+  app.use("/api/v1", appRouter);
 
   //error handler
   app.use(errorHandler);
