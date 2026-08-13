@@ -4,6 +4,23 @@ import { hasher, compare } from "../lib/hash.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 import { ValidationError } from "../errors/ValidationError.js";
 
+const getMe = async (userId: string) => {
+  //check user exists
+  const userRow = await pool.query(
+    `
+    SELECT username, email FROM users WHERE id =$1`,
+    [userId],
+  );
+
+  const user = userRow.rows[0];
+
+  if (!user) {
+    throw new NotFoundError("user not found");
+  }
+
+  return user;
+};
+
 const changePassword = async (input: ChangePasswordInput) => {
   const { userId, currentPassword, newPassword } = input;
 
@@ -48,4 +65,4 @@ const changePassword = async (input: ChangePasswordInput) => {
   return;
 };
 
-export { changePassword };
+export { changePassword, getMe };

@@ -8,6 +8,21 @@ import { ValidationError } from "../errors/ValidationError.js";
 import * as userService from "../services/user.services.js";
 import { UnauthorizedError } from "../errors/UnauthorizedError.js";
 
+const getMe = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+
+  if (typeof userId !== "string") {
+    throw new UnauthorizedError("invalid or missing id");
+  }
+
+  const user = await userService.getMe(userId);
+
+  res.status(200).json({
+    message: "user found",
+    user,
+  });
+});
+
 const changePassword = asyncHandler(
   async (req: Request<{}, {}, ChangePasswordBody>, res: Response) => {
     if (!req.user) {
@@ -29,4 +44,4 @@ const changePassword = asyncHandler(
   },
 );
 
-export { changePassword };
+export { changePassword, getMe };
