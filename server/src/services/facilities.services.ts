@@ -54,7 +54,6 @@ const updateFacility = async (input: FacilityInput, id: string) => {
 
   const updatedFacility = updatedFacilityRow.rows[0];
 
-
   if (!updatedFacility) {
     throw new ValidationError("facility not updated or doesn't exist");
   }
@@ -119,10 +118,28 @@ const listFacilities = async (input: PaginationQuery) => {
   return { facilities, totalPages };
 };
 
+const getAvailability = async (id: string) => {
+  const bookingRow = await pool.query(
+    `SELECT start_time, end_time, status, facility_id
+        FROM bookings WHERE facility_id =$1
+            AND status = 'confirmed'`,
+    [id],
+  );
+
+  const bookings = bookingRow.rows;
+
+  let message = bookings.length
+    ? "facility has bookings"
+    : "no current bookings";
+
+  return { message, bookings };
+};
+
 export {
   listFacilities,
   createFacility,
   deleteFacility,
   updateFacility,
   getFacility,
+  getAvailability,
 };

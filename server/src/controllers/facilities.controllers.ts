@@ -101,8 +101,22 @@ const listFacilities = asyncHandler(
   },
 );
 
+const getAvailability = asyncHandler(
+  async (req: Request<{ id: string }>, res: Response) => {
+    const { id } = req.params;
+
+    const { message, bookings } = await facilitiesServices.getAvailability(id);
+
+    res.status(200).json({
+      message,
+      bookings,
+    });
+  },
+);
+
 export {
   listFacilities,
+  getAvailability,
   createFacility,
   getFacility,
   deleteFacility,

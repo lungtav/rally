@@ -5,6 +5,7 @@ import {
   createFacility,
   deleteFacility,
   updateFacility,
+  getAvailability,
 } from "../controllers/facilities.controllers.js";
 import { requireAdmin } from "../middleware/requireAdmin.js";
 
@@ -15,5 +16,6 @@ facilitiesRouter.delete("/:id", requireAdmin, deleteFacility);
 facilitiesRouter.put("/:id", requireAdmin, updateFacility);
 facilitiesRouter.get("/", listFacilities);
 facilitiesRouter.get("/:id", getFacility);
+facilitiesRouter.get("/:id/availability", getAvailability);
 
 export { facilitiesRouter };
