@@ -64,4 +64,13 @@ const listMyBookings = asyncHandler(
   },
 );
 
-export { createBooking, listMyBookings };
+const getBooking = asyncHandler(
+  async (req: Request<{ id: string }>, res: Response) => {
+    const id = req.params.id;
+
+    const booking = await bookingsServices.getBooking(id);
+    res.status(200).json({ message: "booking fetched successfully", booking });
+  },
+);
+
+export { createBooking, listMyBookings, getBooking };

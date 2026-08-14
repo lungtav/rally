@@ -97,4 +97,24 @@ const listMyBookings = async (id: string, status: string) => {
   return bookings.rows;
 };
 
-export { createBooking, listMyBookings };
+const getBooking = async (id: string) => {
+
+  const bookingRow = await pool.query(
+    `
+    SELECT * FROM bookings
+    WHERE id = $1`,
+    [id],
+  );
+
+
+  const booking = bookingRow.rows[0];
+  console.log(bookingRow)
+
+  if (!booking) {
+    throw new NotFoundError("booking doesn't exist ");
+  }
+
+  return booking;
+};
+
+export { createBooking, listMyBookings, getBooking };
