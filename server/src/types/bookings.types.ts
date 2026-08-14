@@ -9,3 +9,9 @@ export const CreateBookingSchema = z.object({
 });
 
 export type CreateBookingInput = z.infer<typeof CreateBookingSchema>;
+
+export interface ListAllBookingsInput {
+  status?: "upcoming" | "history";
+  page: number;
+  limit: number;
+}

@@ -73,4 +73,37 @@ const getBooking = asyncHandler(
   },
 );
 
-export { createBooking, listMyBookings, getBooking };
+const listAllBookings = asyncHandler(
+  async (
+    req: Request<{}, {}, {}, { status?: string; page?: string; limit?: string }>,
+    res: Response,
+  ) => {
+    const status = req.query.status;
+
+    if (status !== undefined && status !== "upcoming" && status !== "history") {
+      throw new ValidationError("invalid status filter");
+    }
+
+    const page = Math.max(Number(req.query.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(req.query.limit) || 20, 1), 100);
+
+    const { bookings, total } = await bookingsServices.listAllBookings({
+      status,
+      page,
+      limit,
+    });
+
+    res.status(200).json({
+      message: status ? `${status} bookings fetched` : "bookings fetched",
+      bookings,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  },
+);
+
+export { createBooking, listMyBookings, getBooking , listAllBookings};

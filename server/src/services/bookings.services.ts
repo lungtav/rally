@@ -3,6 +3,7 @@ import { NotFoundError } from "../errors/NotFoundError.js";
 import type { CreateBookingInput } from "../types/bookings.types.js";
 import { ConflictError } from "../errors/ConflictError.js";
 import { ValidationError } from "../errors/ValidationError.js";
+import { type ListAllBookingsInput } from "../types/bookings.types.js";
 
 const createBooking = async (input: CreateBookingInput, id: string) => {
   const { startTime, hours, facilityId } = input;
@@ -98,7 +99,6 @@ const listMyBookings = async (id: string, status: string) => {
 };
 
 const getBooking = async (id: string) => {
-
   const bookingRow = await pool.query(
     `
     SELECT * FROM bookings
@@ -106,9 +106,8 @@ const getBooking = async (id: string) => {
     [id],
   );
 
-
   const booking = bookingRow.rows[0];
-  console.log(bookingRow)
+  console.log(bookingRow);
 
   if (!booking) {
     throw new NotFoundError("booking doesn't exist ");
@@ -117,4 +116,42 @@ const getBooking = async (id: string) => {
   return booking;
 };
 
-export { createBooking, listMyBookings, getBooking };
+const listAllBookings = async ({
+  status,
+  page,
+  limit,
+}: ListAllBookingsInput) => {
+  const offset = (page - 1) * limit;
+
+  const statusCondition =
+    status === "upcoming"
+      ? "WHERE b.start_time >= NOW()"
+      : status === "history"
+        ? "WHERE b.start_time < NOW()"
+        : "";
+
+  const bookingsResult = await pool.query(
+    `SELECT b.id, b.start_time, b.end_time, b.created_at,
+            b.facility_id, b.user_id,
+            f.name AS facility_name, f.type AS facility_type,
+            u.username, u.email
+     FROM bookings b
+     JOIN facilities f ON f.id = b.facility_id
+     JOIN users u ON u.id = b.user_id
+     ${statusCondition}
+     ORDER BY b.start_time DESC
+     LIMIT $1 OFFSET $2`,
+    [limit, offset],
+  );
+
+  const countResult = await pool.query(
+    `SELECT COUNT(*) FROM bookings b ${statusCondition}`,
+  );
+
+  return {
+    bookings: bookingsResult.rows,
+    total: Number(countResult.rows[0].count),
+  };
+};
+
+export { createBooking, listMyBookings, getBooking, listAllBookings };
