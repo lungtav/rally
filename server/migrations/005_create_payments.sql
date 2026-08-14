@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS payments(
     currency VARCHAR(3),
     status TEXT NOT NULL DEFAULT 'pending' 
         CHECK(status IN ( 'pending', 'succeeded', 'failed', 'underpaid')),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
 
     booking_id UUID NOT NULL REFERENCES bookings(id)
 );

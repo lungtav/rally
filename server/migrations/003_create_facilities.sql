@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS facilities(
     description TEXT,
     opens_at TIME NOT NULL,
     closes_at TIME NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
+    created_at TIMESTAMP DEFAULT NOW(),
 
     CHECK (closes_at > opens_at)
 );
