@@ -74,4 +74,27 @@ const createBooking = async (input: CreateBookingInput, id: string) => {
   return { booking, facility };
 };
 
-export { createBooking };
+const listMyBookings = async (id: string, status: string) => {
+  let query;
+  if (status === "history") {
+    query = `AND end_time <= NOW() ORDER BY start_time DESC;`;
+  }
+
+  if (status === "upcoming") {
+    query = `AND start_time > NOW() ORDER BY start_time ASC;`;
+  }
+
+  const bookings = await pool.query(
+    `SELECT f.name, b.start_time, b.end_time
+    FROM bookings b
+    LEFT JOIN facilities f
+    ON f.id = b.facility_id
+    WHERE b.user_id =$1
+    ${query}
+    `,[id],
+  );
+
+  return bookings.rows;
+};
+
+export { createBooking, listMyBookings };

@@ -32,12 +32,36 @@ const createBooking = asyncHandler(
 
     res.status(201).json({
       message: "booking created",
-      booking: {
-        booking,
-        facility,
-      },
+      booking,
+      facility,
     });
   },
 );
 
-export { createBooking };
+const listMyBookings = asyncHandler(
+  async (
+    req: Request<{ id: string }, {}, {}, { status: string }>,
+    res: Response,
+  ) => {
+    const id = req.user?.id;
+
+    if (!id) {
+      throw new UnauthorizedError("access denied");
+    }
+
+    const status = req.query.status;
+
+    if (status !== "upcoming" && status !== "history") {
+      throw new ValidationError("invalid or missing status");
+    }
+
+    const bookings = await bookingsServices.listMyBookings(id, status);
+
+    res.status(200).json({
+      message: ` ${status} bookings fetched`,
+      bookings,
+    });
+  },
+);
+
+export { createBooking, listMyBookings };
