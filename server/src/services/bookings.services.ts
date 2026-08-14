@@ -2,6 +2,7 @@ import { pool } from "../config/database.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 import type { CreateBookingInput } from "../types/bookings.types.js";
 import { ConflictError } from "../errors/ConflictError.js";
+import { ValidationError } from "../errors/ValidationError.js";
 
 const createBooking = async (input: CreateBookingInput, id: string) => {
   const { startTime, hours, facilityId } = input;
@@ -23,11 +24,9 @@ const createBooking = async (input: CreateBookingInput, id: string) => {
   const start = new Date(startTime);
   const endTime = new Date(start.getTime() + hours * 60 * 60 * 1000);
 
-  console.log({
-    facilityId,
-    start: start.toISOString(),
-    endTime: endTime.toISOString(),
-  });
+  if (start <= new Date()) {
+    throw new ValidationError("booking start time must be in the future");
+  }
 
   //check for conflicts
   const conflictResult = await pool.query(
@@ -91,7 +90,8 @@ const listMyBookings = async (id: string, status: string) => {
     ON f.id = b.facility_id
     WHERE b.user_id =$1
     ${query}
-    `,[id],
+    `,
+    [id],
   );
 
   return bookings.rows;
