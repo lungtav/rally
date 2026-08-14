@@ -39,6 +39,29 @@ const deleteFacility = async (id: string) => {
 
   return result.rows[0];
 };
+
+const updateFacility = async (input: FacilityInput, id: string) => {
+  const { name, type, description, opensAt, closesAt } = input;
+
+  const updatedFacilityRow = await pool.query(
+    `
+    UPDATE facilities SET name=$1, type=$2, description=$3, opens_at=$4, closes_at=$5
+    WHERE id=$6
+    RETURNING id, name, type, description, opens_at, closes_at
+    `,
+    [name, type, description ?? null, opensAt, closesAt, id],
+  );
+
+  const updatedFacility = updatedFacilityRow.rows[0];
+
+
+  if (!updatedFacility) {
+    throw new ValidationError("facility not updated or doesn't exist");
+  }
+
+  return updatedFacility;
+};
+
 const getFacility = async (id: string) => {
   //find facility
 
@@ -96,4 +119,10 @@ const listFacilities = async (input: PaginationQuery) => {
   return { facilities, totalPages };
 };
 
-export { listFacilities, createFacility, deleteFacility, getFacility };
+export {
+  listFacilities,
+  createFacility,
+  deleteFacility,
+  updateFacility,
+  getFacility,
+};

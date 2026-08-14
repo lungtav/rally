@@ -47,7 +47,28 @@ const deleteFacility = asyncHandler(
   },
 );
 
-const updateFacility = asyncHandler(async (req: Request, res: Response) => {});
+const updateFacility = asyncHandler(
+  async (req: Request<{ id: string }, {}, FacilityInput>, res: Response) => {
+    const { id } = req.params;
+
+    const parsed = FacilitySchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      const message = parsed.error.issues.map((e) => e.message).join(", ");
+      throw new ValidationError(message);
+    }
+
+    const updatedFacility = await facilitiesServices.updateFacility(
+      parsed.data,
+      id,
+    );
+
+    res.status(200).json({
+      message: "facility updated successfully",
+      updatedFacility,
+    });
+  },
+);
 
 const getFacility = asyncHandler(
   async (req: Request<{ id: string }>, res: Response) => {
