@@ -1,17 +1,17 @@
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import type { Request, Response } from "express";
 import type {
-  CreateFacilityInput,
+  FacilityInput,
   PaginationQuery,
 } from "../types/facilities.types.js";
 import * as facilitiesServices from "../services/facilities.services.js";
-import { CreateFacilitySchema } from "../types/facilities.types.js";
+import { FacilitySchema } from "../types/facilities.types.js";
 import { ValidationError } from "../errors/ValidationError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 
 const createFacility = asyncHandler(
-  async (req: Request<{}, {}, CreateFacilityInput>, res: Response) => {
-    const parsed = CreateFacilitySchema.safeParse(req.body);
+  async (req: Request<{}, {}, FacilityInput>, res: Response) => {
+    const parsed = FacilitySchema.safeParse(req.body);
 
     if (!parsed.success) {
       const message = parsed.error.issues.map((e) => e.message).join(", ");
@@ -47,6 +47,8 @@ const deleteFacility = asyncHandler(
   },
 );
 
+const updateFacility = asyncHandler(async (req: Request, res: Response) => {});
+
 const getFacility = asyncHandler(
   async (req: Request<{ id: string }>, res: Response) => {
     const { id } = req.params;
@@ -78,4 +80,10 @@ const listFacilities = asyncHandler(
   },
 );
 
-export { listFacilities, createFacility, getFacility, deleteFacility };
+export {
+  listFacilities,
+  createFacility,
+  getFacility,
+  deleteFacility,
+  updateFacility,
+};

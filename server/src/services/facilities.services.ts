@@ -3,10 +3,10 @@ import { NotFoundError } from "../errors/NotFoundError.js";
 import { ValidationError } from "../errors/ValidationError.js";
 import type {
   PaginationQuery,
-  CreateFacilityInput,
+  FacilityInput,
 } from "../types/facilities.types.js";
 
-const createFacility = async (input: CreateFacilityInput) => {
+const createFacility = async (input: FacilityInput) => {
   const { name, type, description, opensAt, closesAt } = input;
 
   //add to db
@@ -15,7 +15,7 @@ const createFacility = async (input: CreateFacilityInput) => {
     INSERT INTO facilities (name, type, description, opens_at, closes_at) 
     VALUES($1, $2, $3, $4, $5)
     RETURNING *`,
-    [name, type, description, opensAt, closesAt],
+    [name, type, description ?? null, opensAt, closesAt],
   );
 
   const facility = facilityRow.rows[0];

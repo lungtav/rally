@@ -7,13 +7,13 @@ export interface PaginationQuery {
 
 const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)(:[0-5]\d)?$/;
 
-export const CreateFacilitySchema = z
+export const FacilitySchema = z
   .object({
     name: z.string().min(1, "name of facility is invalid"),
     type: z.enum(["basketball", "badminton", "tennis", "football_pitch"], {
       message: "invalid facility type",
     }),
-    description: z.string(),
+    description: z.string().optional(),
     opensAt: z.string().regex(timeRegex, "opens_at must be in HH:MM format"),
     closesAt: z.string().regex(timeRegex, "closes_at must be in HH:MM format"),
   })
@@ -22,4 +22,6 @@ export const CreateFacilitySchema = z
     path: ["closesAt"],
   });
 
-export type CreateFacilityInput = z.infer<typeof CreateFacilitySchema>;
+export type FacilityInput = z.infer<typeof FacilitySchema>;
+
+
