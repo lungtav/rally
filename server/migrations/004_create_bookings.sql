@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS bookings(
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-
+    status TEXT NOT NULL DEFAULT 'confirmed' CHECK (status IN ('confirmed')),
     facility_id UUID NOT NULL REFERENCES facilities(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES users(id),
 
