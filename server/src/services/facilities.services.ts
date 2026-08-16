@@ -120,9 +120,8 @@ const listFacilities = async (input: PaginationQuery) => {
 
 const getAvailability = async (id: string) => {
   const bookingRow = await pool.query(
-    `SELECT start_time, end_time, status, facility_id
-        FROM bookings WHERE facility_id =$1
-            AND status = 'confirmed'`,
+    `SELECT start_time, end_time, facility_id
+        FROM bookings WHERE facility_id =$1`,
     [id],
   );
 

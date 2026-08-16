@@ -8,7 +8,7 @@ const getMe = async (userId: string) => {
   //check user exists
   const userRow = await pool.query(
     `
-    SELECT username, email FROM users WHERE id =$1`,
+    SELECT id, username, email, role FROM users WHERE id =$1`,
     [userId],
   );
 
